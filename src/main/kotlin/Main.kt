@@ -1,27 +1,21 @@
-import jdk.jfr.Category
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
 fun main(args: Array<String>) {
-    val smartHome = SmartHome(
-        SmartTvDevice(deviceName = "Android TV", deviceCategory = "Entertainment"),
-        SmartLightDevice(deviceName = "Google light", deviceCategory = "Utility")
-    )
-
-    smartHome.turnOnTv()
-    smartHome.turnOnLight()
-    println("Total number of devices currently turned on: ${smartHome.deviceTurnOnCount}")
-    println()
-
-    smartHome.increaseTvVolume()
-    smartHome.changeTvChannelToNext()
-    smartHome.increaseLightBrightness()
-    println()
-
-    smartHome.turnOffAllDevices()
-    println("Total number of devices currently turned on: ${smartHome.deviceTurnOnCount}.")
+    printFinalTemperature(27.0, "Celsius ", "Fahrenheit") { 9.0 / 5.0 * it + 32.0 }
+    printFinalTemperature(350.0, "Kelvin",  "Celsius") {it - 273.15}
+    printFinalTemperature(10.0, "Fahrenheit", "Kelvin") {5.0/9.0* (it - 32) + 273.15}
 }
 
+fun printFinalTemperature(
+    initialMeasurement: Double,
+    initialUnit: String,
+    finalUnit: String,
+    conversionFormula: (Double) -> Double
+) {
+    val finalMeasurement = String.format("%.2f", conversionFormula(initialMeasurement)) // two decimal places
+    println("$initialMeasurement degrees $initialUnit is $finalMeasurement degrees $finalUnit.")
+}
 
 open class SmartDevice(val name: String, val category: String) { //создали открытый клас с параметрами
     var deviceStatus = "online"
@@ -35,6 +29,10 @@ open class SmartDevice(val name: String, val category: String) { //создал�
 
     open fun turnOff() {
         deviceStatus = "Off"
+    }
+
+    open fun printDeviceInfo() {
+        println("Device name: $name, category: $category, type: $deviceType")
     }
 }
 
@@ -68,6 +66,16 @@ class SmartTvDevice(deviceName: String, deviceCategory: String) :
         channelNumber++
         println("Channel number increased to $channelNumber.")
     }
+
+    fun decreaseVolume() {
+        speakerVolume--
+        println("Speaker volume increased to $speakerVolume.")
+    }
+
+    fun previousChannel() {
+        channelNumber--
+        println("Channel number increased to $channelNumber.")
+    }
 }
 
 class SmartLightDevice(deviceName: String, deviceCategory: String) :
@@ -89,6 +97,11 @@ class SmartLightDevice(deviceName: String, deviceCategory: String) :
 
     fun increaseBrightness() {
         brightnessLevel++
+        println("Brightness increased to $brightnessLevel.")
+    }
+
+    fun decreaseBrightness() {
+        brightnessLevel--
         println("Brightness increased to $brightnessLevel.")
     }
 }
